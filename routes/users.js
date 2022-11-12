@@ -3,6 +3,7 @@ const { Router } = require('express');
 const generator = require('generate-password');
 const bcrypt = require('bcryptjs');
 const nodemailer = require('nodemailer');
+const Joi = require('joi');
 let user = require("../models/user.js");
 
 
@@ -22,6 +23,14 @@ router.route("/").post((req, res)=>{
     const nic = req.body.nic;
     const phone = req.body.phone;
     const email = req.body.email;
+
+
+    //Validate
+    const {error} = validate(emp_id, type, name, nic, phone, email);
+    if(error){
+        return res.status(400).send(error.details[0].message)
+    }
+    else{
 
     //Generate password
     const password = generator.generate({
@@ -50,10 +59,10 @@ router.route("/").post((req, res)=>{
         sendPassword(email, password);
         res.json("User Added");
     }).catch((err)=>{
+        res.status(400).json("Error: " + err);
         console.log(`Error: ${err}`);
     })
-
-
+    }
 });
 
 
@@ -93,6 +102,14 @@ router.route("/:id").put(async (req, res)=>{
     //Get data
     const {type, name, nic, phone, email,password} = req.body;
 
+    
+    //Validate
+    const {error} = validate(emp_id, type, name, nic, phone, email);
+    if(error){
+        return res.status(400).send(error.details[0].message)
+    }
+    else{
+
     //Update user data
     const updateuser = {
         type,
@@ -111,6 +128,7 @@ router.route("/:id").put(async (req, res)=>{
         console.log(`Error: ${err}`);
         res.status(500).send({status: "Error with updating data", error: err.message});
     })
+    }
 });
 
 
@@ -164,6 +182,18 @@ function sendPassword(email, password) {
     });
 }
 
+//Validate
+function validate(emp_id, type, name, nic, phone, email){
+    const schema = Joi.object({
+        emp_id: Joi.string().min(6).required(),
+        type: Joi.string().max(10).required(),
+        name: Joi.string().min(3).required(),
+        nic: Joi.string().min(10).required(),
+        phone: Joi.string().regex(/^[0-9]{10}$/).messages({'string.pattern.base': `Phone number is invalid.`}).required(),
+        email: Joi.string().required().email(),
+    });
 
+    return schema.validate({emp_id, type, name, nic, phone, email});
+}
 
 module.exports = router;
