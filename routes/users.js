@@ -104,7 +104,7 @@ router.route("/:id").put(async (req, res)=>{
 
     
     //Validate
-    const {error} = validate(emp_id, type, name, nic, phone, email);
+    const {error} = validate(empId, type, name, nic, phone, email);
     if(error){
         return res.status(400).send(error.details[0].message)
     }
