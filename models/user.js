@@ -11,7 +11,8 @@ const  userSchema = new schema ({
 
     emp_id: {
         type: String,
-        required: true
+        required: true,
+        unique: true
     },
 
     name: {
@@ -21,7 +22,8 @@ const  userSchema = new schema ({
 
     nic: {
         type: String,
-        required: true
+        required: true,
+        unique: true
     },
 
     phone: {
@@ -30,6 +32,12 @@ const  userSchema = new schema ({
     },
 
     email: {
+        type: String,
+        required: true,
+        unique: true
+    },
+
+    password: {
         type: String,
         required: true
     }

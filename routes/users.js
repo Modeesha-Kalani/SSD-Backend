@@ -1,5 +1,8 @@
 const router = require('express').Router();
 const { Router } = require('express');
+const generator = require('generate-password');
+const bcrypt = require('bcryptjs');
+const nodemailer = require('nodemailer');
 let user = require("../models/user.js");
 
 
@@ -20,22 +23,36 @@ router.route("/").post((req, res)=>{
     const phone = req.body.phone;
     const email = req.body.email;
 
+    //Generate password
+    const password = generator.generate({
+        length: 10,
+        numbers: true
+    });
+
+    //Hash password
+    const salt = bcrypt.genSaltSync(10);
+    const hashed_password = bcrypt.hashSync(password, salt);
+
     //Add data to model
     const newuser = new user({
-        type,
         emp_id,
+        type,
         name,
         nic,
         phone,
-        email
+        email,
+        password:hashed_password
     });
 
     //Save to database
     newuser.save().then(()=>{
+        //Send password to email
+        sendPassword(email, password);
         res.json("User Added");
     }).catch((err)=>{
         console.log(`Error: ${err}`);
-    }) 
+    })
+
 
 });
 
@@ -74,16 +91,16 @@ router.route("/:id").put(async (req, res)=>{
     let empId = req.params.id;
 
     //Get data
-    const {type, emp_id, name, nic, phone, email} = req.body;
+    const {type, name, nic, phone, email,password} = req.body;
 
     //Update user data
     const updateuser = {
         type,
-        emp_id,
         name,
         nic,
         phone,
-        email
+        email,
+        password
     }
 
     //Find by emp_id and update
@@ -112,6 +129,40 @@ router.route("/:id").delete(async (req, res) => {
         res.status(500).send({status: "Error with deleting user", error: err.message});
     })
 });
+
+
+//Send password to email using nodemailer
+function sendPassword(email, password) {
+    //Create transporter
+    let transporter = nodemailer.createTransport({
+        service: 'gmail',
+        auth: {
+            user: 'codebusters.sliit@gmail.com',
+            pass: 'pyddnaqmcghsocyz'
+        },
+        tls: {
+            rejectUnauthorized: false
+        }
+    });
+
+    //Create mail options
+    let mailOptions = {
+        from: 'codebusters.sliit@gmail.com',
+        to: email,
+        subject: 'Password',
+        text: 'Use this password for login',
+        html: `<h3>Your password is</h3></br><h1>${password}</h1>`
+    };
+
+    //Send mail
+    transporter.sendMail(mailOptions, function (error, info) {
+        if (error) {
+            console.log(error);
+        } else {
+            console.log('Email sent: ' + info.response);
+        }
+    });
+}
 
 
 
