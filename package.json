@@ -2,7 +2,6 @@
   "name": "ssd_backend",
   "version": "1.0.0",
   "description": "ssd project",
-  "main": "index.js",
   "scripts": {
     "start": "node server.js",
     "dev": "nodemon server.js"

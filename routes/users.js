@@ -28,7 +28,7 @@ router.route("/").post((req, res)=>{
     //Validate
     const {error} = validate(emp_id, type, name, nic, phone, email);
     if(error){
-        return res.status(400).send(error.details[0].message)
+        return res.status(400).send({error: error.details[0].message})
     }
     else{
 
@@ -57,9 +57,9 @@ router.route("/").post((req, res)=>{
     newuser.save().then(()=>{
         //Send password to email
         sendPassword(email, password);
-        res.json("User Added");
+        res.status(200).send({status: "User added"});
     }).catch((err)=>{
-        res.status(400).json("Error: " + err);
+        res.status(400).send({error: err.message});
         console.log(`Error: ${err}`);
     })
     }
@@ -157,6 +157,8 @@ function sendPassword(email, password) {
         auth: {
             user: 'codebusters.sliit@gmail.com',
             pass: 'pyddnaqmcghsocyz'
+            // user: 'ssdsecapp123@gmail.com',
+            // pass: 'ssdsec@123'
         },
         tls: {
             rejectUnauthorized: false
