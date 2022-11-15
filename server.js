@@ -20,17 +20,17 @@ const posts = [
 app.get('/posts',authenticateToken,(req, res) => {
     res.send(posts.filter(post => post.username === req.user.name));
 })
-app.get('/login', (req, res) => {
-    //authenticate user
+// app.get('/login', (req, res) => {
+//     //authenticate user
 
 
-    const username = req.body.username;
-    const user = { name: username };
+//     const username = req.body.username;
+//     const user = { name: username };
 
-    const accessToken = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET);
-    res.json({ accessToken: accessToken });
+//     const accessToken = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET);
+//     res.json({ accessToken: accessToken });
     
-})
+// })
 
 function authenticateToken(req,res,next){
     const authHeader = req.headers['authorization'];
