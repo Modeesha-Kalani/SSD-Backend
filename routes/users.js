@@ -33,11 +33,12 @@ router.route("/").post((req, res)=>{
     else{
 
     //Generate password
-    const password = generator.generate({
-        length: 10,
-        numbers: true
-    });
+    // const password = generator.generate({
+    //     length: 10,
+    //     numbers: true
+    // });
 
+    const password = "password";
     //Hash password
     const salt = bcrypt.genSaltSync(10);
     const hashed_password = bcrypt.hashSync(password, salt);
