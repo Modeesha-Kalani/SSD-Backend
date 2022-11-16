@@ -24,6 +24,9 @@ app.use("/user", userRouter);
 const fileRouter = require("./controllers/fileController.js");
 app.use("/upload", fileRouter);
 
+const messageRouter = require("./routes/messages.js");
+app.use("/message",messageRouter);
+
 
 //Connect
 mongoose.connect(URL, {
