@@ -53,7 +53,6 @@ app.post('/login', (req, res) => {
             res.json({message: "User not found please check email", status:false});
         }
         else{
-            console.log("user", user);
             //compare password
             bcrypt.compare(password, user.password, (err, result) => {
                 if(err) throw err;
@@ -77,24 +76,10 @@ app.post('/login', (req, res) => {
         }
     })
     }catch(err){
-        console.log(err);
         //send error
         res.status(500).send(err);
     }
-    //get user from db
-    
 
-    // //Hash password
-    // const salt = bcrypt.genSaltSync(10);
-    // const hashed_password = bcrypt.hashSync(password, salt);
-
-    // console.log(username, ' ', password , ' ', hashed_password);
-    // const user = { name: username };
-
-    // const accessToken = generateAccessToken(user);
-    // const refreshToken = jwt.sign(user, process.env.REFRESH_TOKEN_SECRET);
-    // refreshTokens.push(refreshToken);
-    // res.json({ accessToken: accessToken , refreshToken: refreshToken });
     
 })
 
@@ -107,7 +92,6 @@ app.delete('/logout', (req, res) => {
 //create refresh token
 app.post('/token', (req, res) => {
     const refreshToken = req.body.token;
-    console.log("refreshToken: " + refreshToken);
     if (refreshToken == null) return res.sendStatus(401);
     if (!refreshTokens.includes(refreshToken)) return res.sendStatus(403);
     jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET, (err, user) => {

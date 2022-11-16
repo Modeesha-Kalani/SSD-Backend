@@ -85,7 +85,6 @@ router.route("/").get((req, res)=>{
 //View specific user
 router.route("/:id").get(async (req, res)=>{
     let empId = req.params.id;
-    console.log(empId);
     //Get user data from databse
     const emp = await user.findOne({emp_id: empId}).then((data)=>{
         res.status(200).send({status: "User fetched", data});
