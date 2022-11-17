@@ -1,17 +1,12 @@
 const router = require("express").Router();
 let Message = require("../models/message");
 const Joi = require('joi');
+const bcrypt = require('bcryptjs');
 
 // Create message
 router.route("/add").post((req, res) => {
   const title = req.body.title;
   const message = req.body.message;
-
-//   newMesaage.save().then(() => {
-//       res.json("Message Added")
-//   }).catch((err) => {
-//       console.log(err);
-//   })
 
     //Validate
     const {error} = validate(title,message);
@@ -20,17 +15,18 @@ router.route("/add").post((req, res) => {
     }
     else{
 
-    //Generate password
-    // const password = generator.generate({
-    //     length: 10,
-    //     numbers: true
-    // });
+        const message = "message";
+        const title = "title";
+        //Hash message and title
+        const salt = bcrypt.genSaltSync(10);
+        const hashed_message = bcrypt.hashSync(message, salt);
+        const hashed_title = bcrypt.hashSync(title, salt)
 
     //Add data to model
     const newMesaage = new Message({
 
-        title,
-        message
+        title: hashed_title,
+        message: hashed_message
   
     })
 
