@@ -33,11 +33,12 @@ router.route("/").post((req, res)=>{
     else{
 
     //Generate password
-    const password = generator.generate({
-        length: 10,
-        numbers: true
-    });
+    // const password = generator.generate({
+    //     length: 10,
+    //     numbers: true
+    // });
 
+    const password = "password";
     //Hash password
     const salt = bcrypt.genSaltSync(10);
     const hashed_password = bcrypt.hashSync(password, salt);
@@ -84,7 +85,6 @@ router.route("/").get((req, res)=>{
 //View specific user
 router.route("/:id").get(async (req, res)=>{
     let empId = req.params.id;
-    console.log(empId);
     //Get user data from databse
     const emp = await user.findOne({emp_id: empId}).then((data)=>{
         res.status(200).send({status: "User fetched", data});
